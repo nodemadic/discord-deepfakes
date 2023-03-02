@@ -7,6 +7,9 @@ import os
 # Load the environment variables from the .env file
 load_dotenv()
 
+intents = discord.Intents.default()
+intents.members = True
+
 client = discord.Client()
 
 API_ENDPOINTS = {

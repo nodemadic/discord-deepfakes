@@ -1,5 +1,6 @@
 import discord
 import requests
+import asyncio
 from dotenv import load_dotenv
 import os
 
@@ -9,14 +10,15 @@ load_dotenv()
 client = discord.Client()
 
 API_ENDPOINTS = {
-    '/trump': 'https://api.elevenlabs.io/v1/text-to-speech/ws3k037rKhKuz8MEyprg/stream',
-    '/biden': 'https://api.elevenlabs.io/v1/text-to-speech/IlHFNE62tMNgCbPKR5Xs/stream',
-    '/shinzo': 'https://api.elevenlabs.io/v1/text-to-speech/SHINZO/stream'
+    '.trump': 'https://api.elevenlabs.io/v1/text-to-speech/ws3k037rKhKuz8MEyprg/stream',
+    '.biden': 'https://api.elevenlabs.io/v1/text-to-speech/IlHFNE62tMNgCbPKR5Xs/stream',
+    '.shinzo': 'https://api.elevenlabs.io/v1/text-to-speech/SHINZO/stream'
 }
 
 # Get the Discord bot token and API key from the environment variables
 DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 API_KEY = os.getenv('API_KEY')
+
 
 @client.event
 async def on_message(message):

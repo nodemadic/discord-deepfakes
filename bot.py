@@ -29,6 +29,7 @@ print("beginning client event")
 @client.event
 async def on_message(message):
     print("detected a message")
+    print(message)
     if message.content.startswith('.'):
         print("inside the '.' conditional")
         # Get the command and phrase from the user input

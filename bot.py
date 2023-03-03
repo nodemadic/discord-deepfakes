@@ -4,6 +4,7 @@ import asyncio
 from dotenv import load_dotenv
 import os
 import base64
+import subprocess
 
 # Load the environment variables from the .env file
 load_dotenv()
@@ -26,6 +27,7 @@ API_ENDPOINTS = {
 DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 API_KEY = os.getenv('API_KEY')
 print("beginning client event")
+
 
 @client.event
 async def on_message(message):
@@ -62,10 +64,19 @@ async def on_message(message):
                 voice_channel = message.author.voice.channel
                 voice_client = await voice_channel.connect()
                 audio_data = base64.b64encode(response.content).decode('utf-8')
-                audio_source = discord.FFmpegPCMAudio(f'data:audio/wav;base64,{audio_data}')
-                voice_client.play(audio_source)
-                while voice_client.is_playing():
-                    await asyncio.sleep(1)
+
+                # Split the FFmpeg arguments into chunks
+                audio_data_args = audio_data.split()
+                args_chunk_size = 50  # Experiment with this value to find an optimal chunk size
+                audio_data_args_chunks = [audio_data_args[i:i+args_chunk_size] for i in range(0, len(audio_data_args), args_chunk_size)]
+
+                # Execute the FFmpeg command in chunks
+                for chunk in audio_data_args_chunks:
+                    audio_source = discord.FFmpegPCMAudio(f'data:audio/wav;base64,{" ".join(chunk)}')
+                    voice_client.play(audio_source)
+                    while voice_client.is_playing():
+                        await asyncio.sleep(1)
+
                 await voice_client.disconnect()
         else:
             # If the response was not successful, print the error message

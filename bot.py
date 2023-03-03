@@ -3,6 +3,7 @@ import requests
 import asyncio
 from dotenv import load_dotenv
 import os
+import base64
 
 # Load the environment variables from the .env file
 load_dotenv()
@@ -26,13 +27,9 @@ DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 API_KEY = os.getenv('API_KEY')
 print("beginning client event")
 
-
 @client.event
 async def on_message(message):
-    print("detected a message")
-    print(message)
     if message.content.startswith('.'):
-        print("inside the '.' conditional")
         # Get the command and phrase from the user input
         parts = message.content.split()
         command = parts[0]
@@ -40,11 +37,9 @@ async def on_message(message):
 
         # Check if the command is valid
         if command not in API_ENDPOINTS:
-            print("did not detect valid api endpoint")
             return
 
         # Send a request to the API endpoint
-        print("sending a request to API endpoint")
         api_endpoint = API_ENDPOINTS[command]
         headers = {
             'accept': '*/*',
@@ -58,20 +53,17 @@ async def on_message(message):
                 "similarity_boost": 0
             }
         }
-        print(request_data)
         response = requests.post(api_endpoint, headers=headers, json=request_data)
 
         # Check if the response was successful
-        print("checking response")
-        print(message)
         if response.ok:
-            print("response ok")
             # Play the audio stream in the user's voice channel
             if message.author.voice:
-                print("if command auther is in voice")
                 voice_channel = message.author.voice.channel
                 voice_client = await voice_channel.connect()
-                voice_client.play(discord.FFmpegPCMAudio(response.content))
+                audio_data = base64.b64encode(response.content).decode('utf-8')
+                audio_source = discord.FFmpegPCMAudio(f'data:audio/wav;base64,{audio_data}')
+                voice_client.play(audio_source)
                 while voice_client.is_playing():
                     await asyncio.sleep(1)
                 await voice_client.disconnect()

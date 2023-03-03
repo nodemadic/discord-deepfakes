@@ -9,6 +9,7 @@ load_dotenv()
 print("loading dotenv")
 
 intents = discord.Intents.default()
+intents = discord.Intents.message_content()
 intents.members = True
 
 client = discord.Client(intents=intents)

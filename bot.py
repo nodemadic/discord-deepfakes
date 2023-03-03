@@ -17,8 +17,8 @@ client = discord.Client(intents=intents)
 print("client class created")
 
 API_ENDPOINTS = {
-    '.trump': 'https://api.elevenlabs.io/v1/text-to-speech/ws3k037rKhKuz8MEyprg/stream',
-    '.biden': 'https://api.elevenlabs.io/v1/text-to-speech/IlHFNE62tMNgCbPKR5Xs/stream',
+    '.trump': 'https://api.elevenlabs.io/v1/text-to-speech/IlHFNE62tMNgCbPKR5Xs/stream',
+    '.biden': 'https://api.elevenlabs.io/v1/text-to-speech/ws3k037rKhKuz8MEyprg/stream',
     '.shinzo': 'https://api.elevenlabs.io/v1/text-to-speech/SHINZO/stream'
 }
 

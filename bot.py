@@ -4,7 +4,7 @@ import asyncio
 from dotenv import load_dotenv
 import os
 import base64
-import subprocess
+import tempfile
 
 # Load the environment variables from the .env file
 load_dotenv()
@@ -27,7 +27,6 @@ API_ENDPOINTS = {
 DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 API_KEY = os.getenv('API_KEY')
 print("beginning client event")
-
 
 @client.event
 async def on_message(message):
@@ -59,22 +58,25 @@ async def on_message(message):
 
         # Check if the response was successful
         if response.ok:
+            # Write the audio data to a temporary file
+            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
+                f.write(response.content)
+                audio_source = discord.FFmpegPCMAudio(f.name)
+
             # Play the audio stream in the user's voice channel
             if message.author.voice:
                 voice_channel = message.author.voice.channel
                 voice_client = await voice_channel.connect()
-                audio_data = base64.b64encode(response.content).decode('utf-8')
-                chunk_size = 2000  # Adjust this value as needed
-                chunks = [audio_data[i:i+chunk_size] for i in range(0, len(audio_data), chunk_size)]
-                audio_source = discord.FFmpegPCMAudio(f'data:audio/wav;base64,{" ".join(chunks)}')
                 voice_client.play(audio_source)
                 while voice_client.is_playing():
                     await asyncio.sleep(1)
                 await voice_client.disconnect()
+
+            # Delete the temporary file
+            os.unlink(f.name)
         else:
             # If the response was not successful, print the error message
             error_message = response.json()["detail"][0]["msg"]
             print(f"Error: {error_message}")
-
 
 client.run(DISCORD_BOT_TOKEN)

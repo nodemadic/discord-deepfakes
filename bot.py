@@ -9,8 +9,8 @@ load_dotenv()
 print("loading dotenv")
 
 intents = discord.Intents.default()
-intents = discord.Intents.message_content()
 intents.members = True
+intents.message_content = True
 
 client = discord.Client(intents=intents)
 print("client class created")

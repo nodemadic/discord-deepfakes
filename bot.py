@@ -58,11 +58,12 @@ async def on_message(message):
                 "similarity_boost": 0
             }
         }
+        print(request_data)
         response = requests.post(api_endpoint, headers=headers, json=request_data)
-        print("the response: " + response)
 
         # Check if the response was successful
         print("checking response")
+        print(message)
         if response.ok:
             print("response ok")
             # Play the audio stream in the user's voice channel
